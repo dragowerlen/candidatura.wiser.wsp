@@ -4,64 +4,95 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Formulário de Candidatura – WSP WiseUp</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'Segoe UI',Arial,sans-serif;background:#F1ECE0;color:#221E18;line-height:1.6;}
-  .wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
-  header{text-align:center;margin-bottom:32px;}
-  .brand-badge{display:inline-flex;align-items:center;gap:10px;background:#15130F;color:#F1ECE0;padding:10px 20px;border-radius:30px;margin-bottom:18px;}
-  .brand-badge .brand-logo{width:28px;height:28px;border-radius:8px;background:#A69463;color:#15130F;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;letter-spacing:.02em;}
-  .brand-badge .brand-name{font-weight:700;font-size:14px;letter-spacing:.04em;}
-  header h1{font-size:25px;color:#15130F;margin-bottom:8px;font-weight:800;}
-  header p{color:#8A8172;font-size:14px;}
-  .card{background:#fff;border:1px solid rgba(166,148,99,0.35);border-radius:12px;padding:26px 28px;margin-bottom:20px;}
-  .card h2{font-size:16px;color:#15130F;margin-bottom:14px;border-bottom:1px solid rgba(166,148,99,0.25);padding-bottom:10px;}
-  label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#221E18;}
-  input[type=text], input[type=email], input[type=tel]{width:100%;padding:10px 12px;border:1px solid #C7B98C;border-radius:8px;font-size:14px;margin-bottom:16px;}
-  .instructions{background:#F1ECE0;border-left:3px solid #A69463;border-radius:0 8px 8px 0;padding:14px 16px;font-size:13.5px;margin-bottom:16px;}
-  .instructions ul{margin-left:18px;margin-top:8px;}
-  .instructions li{margin-bottom:4px;}
-  .upload-box{border:2px dashed #C7B98C;border-radius:10px;padding:28px;text-align:center;color:#8A8172;font-size:14px;margin-bottom:8px;cursor:pointer;}
-  .upload-box.has-file{border-color:#4C7A4C;color:#2F5A2F;background:#F3F8F3;}
-  .note{font-size:12px;color:#8A8172;margin-top:6px;}
-  .error-msg{font-size:13px;color:#B0433B;margin-top:-10px;margin-bottom:14px;display:none;}
-  .submit-btn{width:100%;background:#15130F;color:#F1ECE0;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:600;margin-top:10px;cursor:pointer;}
-  .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
-  .checklist{font-size:13px;color:#221E18;}
-  .checklist label{display:flex;align-items:flex-start;gap:8px;font-weight:400;margin-bottom:10px;}
-  .checklist input{margin-top:3px;}
+  body{font-family:'Inter',Arial,sans-serif;background:#0B0B10;color:#EDEBE6;line-height:1.65;}
+  .wrap{max-width:720px;margin:0 auto;padding:56px 24px 90px;}
+  header{text-align:center;margin-bottom:40px;}
+  header img{max-width:260px;width:100%;height:auto;margin:0 auto 32px;display:block;}
+  .kicker{font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:#8E6FF2;font-weight:700;margin-bottom:14px;}
+  header h1{font-size:30px;font-weight:800;color:#FFFFFF;margin-bottom:10px;letter-spacing:-.01em;}
+  header p{color:#9B98A8;font-size:14.5px;}
+  .divider{width:48px;height:2px;background:linear-gradient(90deg,#2563EB,#A21CAF,#DB2777);margin:22px auto 0;border-radius:2px;}
 
-  /* Telas de status */
-  .status-screen{display:none;text-align:center;padding:60px 24px;max-width:480px;margin:0 auto;}
+  .card{background:#14141C;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:32px 32px;margin-bottom:22px;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,#2563EB,#A21CAF,#DB2777);}
+  .card h2{font-size:15px;font-weight:700;color:#FFFFFF;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+  .step-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(142,111,242,0.15);color:#B9A6FF;font-size:12px;font-weight:700;}
+
+  label{display:block;font-size:12.5px;font-weight:600;margin-bottom:8px;color:#C7C4D2;letter-spacing:.01em;}
+  input[type=text], input[type=email], input[type=tel]{
+    width:100%;padding:13px 16px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;
+    font-size:14.5px;margin-bottom:18px;background:#0E0E15;color:#EDEBE6;transition:border-color .2s, box-shadow .2s;
+  }
+  input::placeholder{color:#5C5968;}
+  input:focus{outline:none;border-color:#8E6FF2;box-shadow:0 0 0 3px rgba(142,111,242,0.15);}
+
+  .instructions{background:#0E0E15;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:18px 20px;font-size:13.5px;margin-bottom:18px;color:#C7C4D2;}
+  .instructions strong{color:#FFFFFF;}
+  .instructions ul{margin-left:18px;margin-top:8px;}
+  .instructions li{margin-bottom:5px;}
+
+  .upload-box{
+    border:1.5px dashed rgba(142,111,242,0.4);border-radius:12px;padding:32px;text-align:center;
+    color:#9B98A8;font-size:14px;margin-bottom:8px;cursor:pointer;background:rgba(142,111,242,0.04);
+    transition:border-color .2s, background .2s;
+  }
+  .upload-box:hover{border-color:#8E6FF2;background:rgba(142,111,242,0.08);}
+  .upload-box.has-file{border-color:#34D399;color:#6EE7B7;background:rgba(52,211,153,0.07);}
+
+  .note{font-size:11.5px;color:#6F6C7C;margin-top:8px;}
+  .error-msg{font-size:13px;color:#F87171;margin-top:-10px;margin-bottom:16px;display:none;padding-left:2px;}
+
+  .submit-btn{
+    width:100%;background:linear-gradient(90deg,#2563EB,#A21CAF,#DB2777);color:#FFFFFF;border:none;border-radius:12px;
+    padding:16px;font-size:15px;font-weight:700;margin-top:12px;cursor:pointer;letter-spacing:.01em;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .submit-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(142,111,242,0.25);}
+  .submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+
+  .checklist{font-size:13.5px;color:#C7C4D2;}
+  .checklist label{display:flex;align-items:flex-start;gap:10px;font-weight:400;margin-bottom:14px;}
+  .checklist input{margin-top:3px;width:16px;height:16px;accent-color:#8E6FF2;}
+
+  .status-screen{display:none;text-align:center;padding:70px 24px;max-width:480px;margin:0 auto;}
   .status-screen.active{display:block;}
-  .progress-track{width:100%;height:10px;background:#E7E0CF;border-radius:6px;overflow:hidden;margin:28px 0 14px;}
-  .progress-fill{height:100%;width:0%;background:#A69463;border-radius:6px;transition:width .3s ease;}
-  .progress-pct{font-size:13px;color:#8A8172;font-weight:600;}
-  .status-title{font-size:19px;color:#15130F;margin-bottom:8px;font-weight:700;}
-  .status-sub{font-size:14px;color:#8A8172;}
-  .icon-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:30px;}
-  .icon-approved{background:#E4F1E4;color:#2F5A2F;}
-  .icon-rejected{background:#F6E6E4;color:#B0433B;}
-  .retry-btn{background:#15130F;color:#F1ECE0;border:none;border-radius:8px;padding:12px 24px;font-size:14px;font-weight:600;margin-top:18px;cursor:pointer;}
-  .wa-btn{display:inline-block;background:#25D366;color:#fff;text-decoration:none;border-radius:8px;padding:14px 28px;font-size:15px;font-weight:700;margin-top:20px;}
+  .progress-track{width:100%;height:6px;background:#1C1C26;border-radius:6px;overflow:hidden;margin:30px 0 14px;}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#2563EB,#A21CAF,#DB2777);border-radius:6px;transition:width .3s ease;}
+  .progress-pct{font-size:13px;color:#6F6C7C;font-weight:600;}
+  .status-title{font-size:20px;color:#FFFFFF;margin-bottom:10px;font-weight:700;}
+  .status-sub{font-size:14.5px;color:#9B98A8;}
+
+  .icon-circle{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:26px;}
+  .icon-rejected{background:rgba(248,113,113,0.12);color:#F87171;border:1px solid rgba(248,113,113,0.3);}
+
+  .retry-btn{background:transparent;color:#EDEBE6;border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:13px 28px;font-size:14px;font-weight:600;margin-top:22px;cursor:pointer;}
+  .retry-btn:hover{border-color:#8E6FF2;}
+
+  .wa-btn{display:inline-block;background:#25D366;color:#0B0B10;text-decoration:none;border-radius:12px;padding:16px 32px;font-size:15px;font-weight:700;margin-top:24px;}
+
+  .approved-img{max-width:280px;width:100%;height:auto;margin:0 auto 26px;display:block;border-radius:12px;}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- TELA 1: FORMULÁRIO -->
   <div id="screen-form">
     <header>
-      <img src="https://d31zra5bs5df64.cloudfront.net/prod/3LfTiz8X3iJ2GdjmE2uvQKbNdOv/chat/3M4mGRYHmDxgInWYVv4jTFmY8DX/3M6u0HXo78gZm8ZeVFnWlJ98k4H.png?Expires=1794686713&Key-Pair-Id=K2FT0I8VPJSP5H&Signature=hCl2x7M1FO-RkzNZgCwoqn9~17vG8E7AyZViqptYQZmjIZQ1~-cZB2GrMNfZvGM6fJlk0EOqecYzQkhyqJ6z~90NmkQcNsa7c8pzYxHCVJve99YKRBhki5OZeyAWqVMK1IXgUW11Dmfi5T4Ta80YqLUt~VttY-n4EDQYTxTnhpTLgu9iluM-TSnLbpr5FRvBnSRgLPiPkkjBcBnD69raUJTM3EboFiXIOs9u3d1AQZteJEkdtYy2MKnQWvHokowAEYcs7UmmADfODCK89N~~2pfPeK~bP55xL3AIVt5KvqbU2Jh1JZzySMKvhNGyPV6KXjDsQOgZF4SuXxv-QL~4YQ__" alt="WSP - Wiser Sales Platform" style="max-width:280px;width:100%;height:auto;object-fit:contain;margin:0 auto 14px;border-radius:8px;display:block;background:#000000;padding:10px;">
+      <img src="https://d31zra5bs5df64.cloudfront.net/prod/3LfTiz8X3iJ2GdjmE2uvQKbNdOv/chat/3M4mGRYHmDxgInWYVv4jTFmY8DX/3M6wGN6osrOFrXljrnLC1xqx97S.png?Expires=1794687828&Key-Pair-Id=K2FT0I8VPJSP5H&Signature=F54HhlegWBNZ3YxQrUn8iNj6l96zThWIwqf1APMyHczt7NZs1dzKcVqxOY5ZkpYXlPCPWmxeZLDfWItLChTjDJd~tNVhk2Lut-oK-G1-Z71ykZmJxe0oxq5CUCvuPwAEOnP8WD7IUsYRNHjVqI2zEvtEywc6A0ArMQHF4wxZLu44U4ulSNr4NxdTNH7c9pEbohDDvaOfsAWqdcVf6u~c4hNQJ5~vjnYNN9rdElZwca1wdmDhYl8MfnFnD~9ZgtYiSl6a0Qwv4ltCuKCB6~MwVXkrcDwN~6r5eqLYRJmb9htmszduWfGKt3rb~O7doKu4OJzsvbYmgkGHU-lWSgBiPA__" alt="WSP - Wiser Sales Platform">
+      <div class="kicker">Processo seletivo</div>
       <h1>Formulário de Candidatura</h1>
-      <p style="color:#15130F;font-weight:700;font-size:14.5px;letter-spacing:.01em;">Wiser Educação | WSP | Wise Up Online | Drago</p>
+      <p>Wiser Educação · WSP · Wise Up Online · Drago</p>
+      <div class="divider"></div>
     </header>
 
     <div class="card">
-      <h2>1. Seus dados</h2>
+      <h2><span class="step-num">1</span>Seus dados</h2>
       <label>Nome completo</label>
       <input type="text" id="field-name" placeholder="Digite seu nome e sobrenome">
-      <p class="note" style="margin-top:-12px;margin-bottom:16px;">Informe nome e sobrenome.</p>
+      <p class="note" style="margin-top:-12px;margin-bottom:18px;">Informe nome e sobrenome.</p>
       <label>E-mail</label>
       <input type="email" id="field-email" placeholder="seuemail@exemplo.com">
       <label>Telefone / WhatsApp (com DDD)</label>
@@ -69,17 +100,17 @@
     </div>
 
     <div class="card">
-      <h2>2. Grave seu vídeo de candidatura</h2>
+      <h2><span class="step-num">2</span>Vídeo de candidatura</h2>
       <div class="instructions">
         <strong>Instrução da tarefa:</strong>
-        <p style="margin-top:6px;">Abra a câmera frontal do seu celular, e como se fosse fazer uma selfie, grave um vídeo de até <strong>60 segundos</strong> comentando:</p>
+        <p style="margin-top:8px;">Abra a câmera frontal do seu celular, e como se fosse fazer uma selfie, grave um vídeo de até <strong>60 segundos</strong> comentando:</p>
         <ul>
           <li>Por que essa oportunidade se conecta com o que você busca hoje.</li>
-          <li>E o que você espera alcançar (pessoal, profissional e financeiramente), se for aprovado(a).</li>
+          <li>O que você espera alcançar (pessoal, profissional e financeiramente), se for aprovado(a).</li>
         </ul>
-        <p style="margin-top:8px;">Regras importantes:</p>
+        <p style="margin-top:10px;">Regras importantes:</p>
         <ul>
-          <li>O vídeo deve ter no máximo 60 segundos.</li>
+          <li>Vídeo com no máximo 60 segundos.</li>
           <li>Formato MP4 (padrão na maioria dos dispositivos).</li>
         </ul>
       </div>
@@ -87,11 +118,10 @@
         📹 Clique aqui para anexar o seu vídeo (MP4, até 60s)
       </div>
       <input type="file" id="field-video" accept="video/mp4,video/quicktime" style="display:none">
-
     </div>
 
     <div class="card">
-      <h2>3. Declarações do candidato</h2>
+      <h2><span class="step-num">3</span>Declarações do candidato</h2>
       <div class="checklist">
         <label><input type="checkbox" id="chk1"> Assisti à apresentação da oportunidade de trabalho e entendi que a remuneração é 100% comissionada, 100% home office, feito por ligação e com flexibilidade de horário.</label>
         <label><input type="checkbox" id="chk3"> Entendi que não é necessário realizar investimento financeiro ou comprar qualquer produto.</label>
@@ -104,7 +134,6 @@
     <button class="submit-btn" id="submit-btn" onclick="submitForm()">Enviar candidatura</button>
   </div>
 
-  <!-- TELA 2: CARREGANDO -->
   <div class="status-screen" id="screen-loading">
     <div class="status-title">Analisando sua candidatura...</div>
     <div class="status-sub" id="loading-sub">Sua resposta está em análise</div>
@@ -112,15 +141,13 @@
     <div class="progress-pct" id="progress-pct">0%</div>
   </div>
 
-  <!-- TELA 3A: APROVADO -->
   <div class="status-screen" id="screen-approved">
-    <img src="https://d31zra5bs5df64.cloudfront.net/prod/3LfTiz8X3iJ2GdjmE2uvQKbNdOv/chat/3M4mGRYHmDxgInWYVv4jTFmY8DX/3M6uvP1Pize9L88mqR3cD6IkrEp.png?Expires=1794687167&Key-Pair-Id=K2FT0I8VPJSP5H&Signature=DKIiSjYGgPIOQP1qoLwLYnCZz4BBoRE-Aa5eSocqAtOfZwVx3O7xW2mUR2o1~m0Zimv8gqBIeSQLlY9CltNYvORT-lvWZU8ZnTUlrv85BArik9YpaTEvYXu-IoQ8Qk3taO2DCrW2IQ9RSpnUmNU6ujHTriuINEKc9g6lEZZFHGUeev2D3BNtUlGPVdZdMudz5wCA2uCJ~Jvu-oiYS5vtsivs22NvxwpBsc7dJB34sJhGAH111z1-qrI2jKItm8g-idny9pS4xtmO832QsMQ8ojlNbJiMrMbOxXgcfre4Kb2JDScONgOn3VwO-TBySfL4rf3XYshpDTslspJaueImgQ__" alt="Aprovado" style="max-width:280px;width:100%;height:auto;margin:0 auto 20px;display:block;">
-    <p style="font-size:17px;font-weight:700;color:#15130F;margin-bottom:10px;">Parabéns pela sua aprovação!</p>
-    <p class="status-sub" style="font-size:14.5px;color:#000000;">Para receber as próximas orientações da sua candidatura, clique no botão abaixo e envie a palavra "Aprovado" pelo WhatsApp.</p>
+    <img class="approved-img" src="https://d31zra5bs5df64.cloudfront.net/prod/3LfTiz8X3iJ2GdjmE2uvQKbNdOv/chat/3M4mGRYHmDxgInWYVv4jTFmY8DX/3M6vKAB2cpjdC7lhrCkknB2AIRO.png?Expires=1794687364&Key-Pair-Id=K2FT0I8VPJSP5H&Signature=KD4OaZuveBatX7Y69Xl0HMkYZRfMT4BNK1MAOrP02KuybayCphwx4Cv7sXDXfhcaar5OsmNysfXJy4EB4o6V9IspXYpuss-slvPxF-FfxLByRn-A8wk38bL0bVTkMRIoEZGreIhJfV~vSAxxYEdCzWAsGWUBbCTplBfj4V~Cw94-XstJWtqkl9Ms2gj38T4799bLqq-GWQaY5Xy6UXQyZixSy3LLhaH3p6jj91t4OT8JV9IxluRzYZoTZaMzUOyyfn7~AAYCFOInLu4FwJ5HV7AXtrUGduTmQrWijtvSNmtp~8KrPWi9txmfXO2GmRXZVyZwv1TskVk7~sApscPtCQ__" alt="Aprovado">
+    <p style="font-size:18px;font-weight:700;color:#FFFFFF;margin-bottom:12px;">Parabéns pela sua aprovação!</p>
+    <p class="status-sub">Para receber as próximas orientações da sua candidatura, clique no botão abaixo e envie a palavra "Aprovado" pelo WhatsApp.</p>
     <a class="wa-btn" href="https://wa.me/5516988057843?text=Aprovado" target="_blank" rel="noopener">Falar no WhatsApp agora</a>
   </div>
 
-  <!-- TELA 3B: NÃO APROVADO -->
   <div class="status-screen" id="screen-rejected">
     <div class="icon-circle icon-rejected">!</div>
     <div class="status-title">Não foi possível concluir sua candidatura</div>
@@ -131,12 +158,11 @@
 </div>
 
 <script>
-// ⚠️ Substitua pela URL do seu Web App do Google Apps Script (passo a passo abaixo)
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGQqpNjNPyrBXiBzE47sc0YjYM1wsCUAlQLbU4pMuKz_eMA7fz3QLQ8u4wXPdam6NyEA/exec";
 
 function showScreen(id){
   document.querySelectorAll('.status-screen, #screen-form').forEach(el => el.style.display = 'none');
-  document.getElementById(id).style.display = (id === 'screen-form') ? 'block' : 'block';
+  document.getElementById(id).style.display = 'block';
   document.getElementById(id).classList.add('active');
 }
 
