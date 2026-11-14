@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulário de Candidatura – WSP WiseUp</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#F1ECE0;color:#221E18;line-height:1.6;}
+  .wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
+  header{text-align:center;margin-bottom:32px;}
+  header h1{font-size:24px;color:#15130F;margin-bottom:8px;}
+  header p{color:#8A8172;font-size:14px;}
+  .card{background:#fff;border:1px solid rgba(166,148,99,0.35);border-radius:12px;padding:26px 28px;margin-bottom:20px;}
+  .card h2{font-size:16px;color:#15130F;margin-bottom:14px;border-bottom:1px solid rgba(166,148,99,0.25);padding-bottom:10px;}
+  label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#221E18;}
+  input[type=text], input[type=email], input[type=tel]{width:100%;padding:10px 12px;border:1px solid #C7B98C;border-radius:8px;font-size:14px;margin-bottom:16px;}
+  .instructions{background:#F1ECE0;border-left:3px solid #A69463;border-radius:0 8px 8px 0;padding:14px 16px;font-size:13.5px;margin-bottom:16px;}
+  .instructions ul{margin-left:18px;margin-top:8px;}
+  .instructions li{margin-bottom:4px;}
+  .upload-box{border:2px dashed #C7B98C;border-radius:10px;padding:28px;text-align:center;color:#8A8172;font-size:14px;margin-bottom:8px;cursor:pointer;}
+  .upload-box.has-file{border-color:#4C7A4C;color:#2F5A2F;background:#F3F8F3;}
+  .note{font-size:12px;color:#8A8172;margin-top:6px;}
+  .error-msg{font-size:13px;color:#B0433B;margin-top:-10px;margin-bottom:14px;display:none;}
+  .submit-btn{width:100%;background:#15130F;color:#F1ECE0;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:600;margin-top:10px;cursor:pointer;}
+  .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
+  .checklist{font-size:13px;color:#221E18;}
+  .checklist label{display:flex;align-items:flex-start;gap:8px;font-weight:400;margin-bottom:10px;}
+  .checklist input{margin-top:3px;}
+
+  /* Telas de status */
+  .status-screen{display:none;text-align:center;padding:60px 24px;max-width:480px;margin:0 auto;}
+  .status-screen.active{display:block;}
+  .progress-track{width:100%;height:10px;background:#E7E0CF;border-radius:6px;overflow:hidden;margin:28px 0 14px;}
+  .progress-fill{height:100%;width:0%;background:#A69463;border-radius:6px;transition:width .3s ease;}
+  .progress-pct{font-size:13px;color:#8A8172;font-weight:600;}
+  .status-title{font-size:19px;color:#15130F;margin-bottom:8px;font-weight:700;}
+  .status-sub{font-size:14px;color:#8A8172;}
+  .icon-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:30px;}
+  .icon-approved{background:#E4F1E4;color:#2F5A2F;}
+  .icon-rejected{background:#F6E6E4;color:#B0433B;}
+  .retry-btn{background:#15130F;color:#F1ECE0;border:none;border-radius:8px;padding:12px 24px;font-size:14px;font-weight:600;margin-top:18px;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TELA 1: FORMULÁRIO -->
+  <div id="screen-form">
+    <header>
+      <h1>Formulário de Candidatura</h1>
+      <p>WSP – Wise Sales Platform | WiseUp</p>
+    </header>
+
+    <div class="card">
+      <h2>1. Seus dados</h2>
+      <label>Nome completo</label>
+      <input type="text" id="field-name" placeholder="Digite seu nome completo">
+      <label>E-mail</label>
+      <input type="email" id="field-email" placeholder="seuemail@exemplo.com">
+      <label>Telefone / WhatsApp</label>
+      <input type="tel" id="field-phone" placeholder="(00) 00000-0000">
+    </div>
+
+    <div class="card">
+      <h2>2. Grave seu vídeo de candidatura</h2>
+      <div class="instructions">
+        <strong>Instrução da tarefa:</strong>
+        <p style="margin-top:6px;">Grave um vídeo de até <strong>60 segundos</strong>, falando diretamente para a câmera, respondendo:</p>
+        <ul>
+          <li>Por que essa oportunidade se conecta com o que você busca hoje?</li>
+          <li>O que você espera alcançar (pessoal ou financeiramente) nos próximos 12 meses se for aprovado?</li>
+        </ul>
+        <p style="margin-top:8px;">Regras importantes:</p>
+        <ul>
+          <li>O vídeo deve ter no máximo 60 segundos.</li>
+          <li>Grave na vertical, com áudio e imagem claros.</li>
+          <li>Formato MP4, de preferência até 30MB.</li>
+        </ul>
+      </div>
+      <div class="upload-box" id="upload-box" onclick="document.getElementById('field-video').click()">
+        📹 Clique aqui para selecionar o vídeo (MP4, até 60s)
+      </div>
+      <input type="file" id="field-video" accept="video/mp4,video/quicktime" style="display:none">
+      <p class="note">Candidaturas sem vídeo, com vídeo acima do tempo limite, ou que não respondam às duas perguntas pedidas, não seguem para a próxima etapa.</p>
+    </div>
+
+    <div class="card">
+      <h2>3. Antes de enviar</h2>
+      <div class="checklist">
+        <label><input type="checkbox" id="chk1"> Assisti à apresentação da oportunidade e entendi que a remuneração é 100% comissionada, sem salário fixo.</label>
+        <label><input type="checkbox" id="chk2"> Entendi que o trabalho é home office, feito por ligação via WhatsApp, e que preciso construir minha própria lista de contatos (não é fornecida pela empresa).</label>
+        <label><input type="checkbox" id="chk3"> Tenho disponibilidade e interesse real em seguir o treinamento e o plano de carreira.</label>
+      </div>
+    </div>
+
+    <p class="error-msg" id="error-msg"></p>
+    <button class="submit-btn" id="submit-btn" onclick="submitForm()">Enviar candidatura</button>
+  </div>
+
+  <!-- TELA 2: CARREGANDO -->
+  <div class="status-screen" id="screen-loading">
+    <div class="status-title">Analisando sua candidatura...</div>
+    <div class="status-sub" id="loading-sub">Sua resposta está em análise</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-pct" id="progress-pct">0%</div>
+  </div>
+
+  <!-- TELA 3A: APROVADO -->
+  <div class="status-screen" id="screen-approved">
+    <div class="icon-circle icon-approved">✓</div>
+    <div class="status-title">Candidatura aprovada!</div>
+    <p class="status-sub">Recebemos seus dados e seu vídeo. Em breve você receberá um retorno no WhatsApp com os próximos passos do processo.</p>
+  </div>
+
+  <!-- TELA 3B: NÃO APROVADO -->
+  <div class="status-screen" id="screen-rejected">
+    <div class="icon-circle icon-rejected">!</div>
+    <div class="status-title">Não foi possível concluir sua candidatura</div>
+    <p class="status-sub" id="rejected-reason">Identificamos que o vídeo não foi enviado corretamente. Você pode tentar novamente.</p>
+    <button class="retry-btn" onclick="resetForm()">Tentar novamente</button>
+  </div>
+
+</div>
+
+<script>
+// ⚠️ Substitua pela URL do seu Web App do Google Apps Script (passo a passo abaixo)
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGQqpNjNPyrBXiBzE47sc0YjYM1wsCUAlQLbU4pMuKz_eMA7fz3QLQ8u4wXPdam6NyEA/exec";
+
+function showScreen(id){
+  document.querySelectorAll('.status-screen, #screen-form').forEach(el => el.style.display = 'none');
+  document.getElementById(id).style.display = (id === 'screen-form') ? 'block' : 'block';
+  document.getElementById(id).classList.add('active');
+}
+
+document.getElementById('field-video').addEventListener('change', function(){
+  const box = document.getElementById('upload-box');
+  if(this.files && this.files[0]){
+    box.classList.add('has-file');
+    box.textContent = '✅ Vídeo selecionado: ' + this.files[0].name;
+  }
+});
+
+function showError(msg){
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function animateProgress(durationMs){
+  return new Promise(resolve => {
+    const fill = document.getElementById('progress-fill');
+    const pct = document.getElementById('progress-pct');
+    let p = 0;
+    const step = 100 / (durationMs / 150);
+    const interval = setInterval(() => {
+      p = Math.min(p + step, 95); // trava em 95% até a resposta real chegar
+      fill.style.width = p + '%';
+      pct.textContent = Math.round(p) + '%';
+      if(p >= 95) clearInterval(interval);
+    }, 150);
+    resolve();
+  });
+}
+
+function finishProgress(){
+  const fill = document.getElementById('progress-fill');
+  const pct = document.getElementById('progress-pct');
+  fill.style.width = '100%';
+  pct.textContent = '100%';
+}
+
+async function submitForm(){
+  const name = document.getElementById('field-name').value.trim();
+  const email = document.getElementById('field-email').value.trim();
+  const phone = document.getElementById('field-phone').value.trim();
+  const videoFile = document.getElementById('field-video').files[0];
+  const chk1 = document.getElementById('chk1').checked;
+  const chk2 = document.getElementById('chk2').checked;
+  const chk3 = document.getElementById('chk3').checked;
+
+  document.getElementById('error-msg').style.display = 'none';
+
+  if(!name || !email || !phone){
+    showError('Preencha nome, e-mail e telefone antes de enviar.');
+    return;
+  }
+  if(!chk1 || !chk2 || !chk3){
+    showError('Marque as três confirmações antes de enviar.');
+    return;
+  }
+
+  // Sem vídeo -> já reprova direto, sem precisar chamar o backend
+  if(!videoFile){
+    document.getElementById('screen-form').style.display = 'none';
+    document.getElementById('rejected-reason').textContent = 'Não identificamos o envio do vídeo de candidatura. Ele é obrigatório para seguir no processo.';
+    showScreen('screen-rejected');
+    return;
+  }
+
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('screen-form').style.display = 'none';
+  showScreen('screen-loading');
+  animateProgress(4000);
+
+  try{
+    const base64 = await fileToBase64(videoFile);
+    const payload = {
+      name, email, phone,
+      videoBase64: base64,
+      videoName: videoFile.name,
+      mimeType: videoFile.type || 'video/mp4'
+    };
+
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+    finishProgress();
+
+    setTimeout(() => {
+      document.getElementById('screen-loading').style.display = 'none';
+      if(result.status === 'ok'){
+        showScreen('screen-approved');
+      } else {
+        document.getElementById('rejected-reason').textContent = 'Houve um problema ao enviar seu vídeo. Tente novamente.';
+        showScreen('screen-rejected');
+      }
+    }, 500);
+
+  } catch(err){
+    finishProgress();
+    setTimeout(() => {
+      document.getElementById('screen-loading').style.display = 'none';
+      document.getElementById('rejected-reason').textContent = 'Houve um problema ao enviar sua candidatura. Verifique sua conexão e tente novamente.';
+      showScreen('screen-rejected');
+    }, 500);
+  }
+}
+
+function resetForm(){
+  document.getElementById('screen-rejected').style.display = 'none';
+  document.getElementById('screen-approved').style.display = 'none';
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('progress-pct').textContent = '0%';
+  document.getElementById('screen-form').style.display = 'block';
+}
+</script>
+</body>
+</html>
