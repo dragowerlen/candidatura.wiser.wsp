@@ -52,9 +52,9 @@
   <!-- TELA 1: FORMULÁRIO -->
   <div id="screen-form">
     <header>
-      <div class="brand-badge"><span class="brand-logo">WSP</span><span class="brand-name">WISE SALES PLATFORM</span></div>
+      <img src="https://d31zra5bs5df64.cloudfront.net/prod/3LfTiz8X3iJ2GdjmE2uvQKbNdOv/chat/3M4mGRYHmDxgInWYVv4jTFmY8DX/3M6URgklQrM1x2MbDvnWdPuVfNW.jpg?Expires=1794674103&Key-Pair-Id=K2FT0I8VPJSP5H&Signature=rV4f00pPyOyzc7mL~119JwulqMsjyhvDJt2lj1muzQelXlz-nkfxLa2R4qatUdUpvVVOv19EHPWK3F0AX2BJkONkfdfSKTfu7fFXBSW8GYNsxB2YvhV5cuSDNOPVMlDUVELWdODj6NQfzwZqpgssJcMLkPEayLpaVfYL8v7eThvwGpUwSlic~UUV1jmcGghuvki1MTPNQhRpYK4PmlbIXCTU29vP80l0VOwJHZ0ByzzFdR3rxu~6mTJ8ehySjuHcMCzVw4eGuTqfFu4WV4OrngrpT1FVamgCG7BdtEe6EZaTP5ZOC6lHgrL1wMRAkP2wAzpRnE6uPGbk1BbrkaOnVg__" alt="WSP - Wiser Sales Platform" style="max-width:220px;margin:0 auto 18px;border-radius:8px;display:block;">
       <h1>Formulário de Candidatura</h1>
-      <p>Processo seletivo oficial WSP · Powered by WiseUp</p>
+      <p style="color:#15130F;font-weight:700;font-size:14.5px;letter-spacing:.01em;">Wiser Educação | WSP (Wiser Sales Platform) | Drago</p>
     </header>
 
     <div class="card">
@@ -72,16 +72,15 @@
       <h2>2. Grave seu vídeo de candidatura</h2>
       <div class="instructions">
         <strong>Instrução da tarefa:</strong>
-        <p style="margin-top:6px;">Pegue seu celular, abra a câmera frontal (modo selfie) e grave um vídeo de até <strong>60 segundos</strong> falando:</p>
+        <p style="margin-top:6px;">Abra a câmera frontal do seu celular, e como se fosse fazer uma selfie, grave um vídeo de até <strong>60 segundos</strong> comentando:</p>
         <ul>
-          <li>Por que essa oportunidade se conecta com o que você busca hoje</li>
-          <li>O que você espera alcançar (pessoal, profissional e financeiramente) se for aprovado</li>
+          <li>Por que essa oportunidade se conecta com o que você busca hoje.</li>
+          <li>E o que você espera alcançar (pessoal, profissional e financeiramente), se for aprovado(a).</li>
         </ul>
         <p style="margin-top:8px;">Regras importantes:</p>
         <ul>
           <li>O vídeo deve ter no máximo 60 segundos.</li>
-          <li>Grave na vertical, com áudio e imagem claros.</li>
-          <li>Formato MP4, de preferência até 30MB.</li>
+          <li>Formato MP4 (padrão na maioria dos dispositivos).</li>
         </ul>
       </div>
       <div class="upload-box" id="upload-box" onclick="document.getElementById('field-video').click()">
@@ -94,8 +93,7 @@
     <div class="card">
       <h2>3. Antes de enviar</h2>
       <div class="checklist">
-        <label><input type="checkbox" id="chk1"> Assisti à apresentação da oportunidade de trabalho e entendi que a remuneração é 100% comissionada.</label>
-        <label><input type="checkbox" id="chk2"> Entendi que o trabalho é 100% home office, feito por ligação e com flexibilidade de horário.</label>
+        <label><input type="checkbox" id="chk1"> Assisti à apresentação da oportunidade de trabalho e entendi que a remuneração é 100% comissionada, 100% home office, feito por ligação e com flexibilidade de horário.</label>
         <label><input type="checkbox" id="chk3"> Entendi que não é necessário realizar investimento financeiro ou comprar qualquer produto.</label>
         <label><input type="checkbox" id="chk4"> Entendi que receberei treinamento de técnica de venda, gestão emocional, liderança, suporte e acompanhamento diário.</label>
         <label><input type="checkbox" id="chk5"> Tenho disponibilidade e interesse real em seguir o treinamento e o plano de carreira.</label>
@@ -194,7 +192,6 @@ async function submitForm(){
   const phone = document.getElementById('field-phone').value.trim();
   const videoFile = document.getElementById('field-video').files[0];
   const chk1 = document.getElementById('chk1').checked;
-  const chk2 = document.getElementById('chk2').checked;
   const chk3 = document.getElementById('chk3').checked;
   const chk4 = document.getElementById('chk4').checked;
   const chk5 = document.getElementById('chk5').checked;
@@ -214,7 +211,7 @@ async function submitForm(){
     showError('É obrigatório anexar o vídeo de candidatura antes de enviar.');
     return;
   }
-  if(!chk1 || !chk2 || !chk3 || !chk4 || !chk5){
+  if(!chk1 || !chk3 || !chk4 || !chk5){
     showError('Marque todas as confirmações antes de enviar.');
     return;
   }
