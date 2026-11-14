@@ -9,7 +9,10 @@
   body{font-family:'Segoe UI',Arial,sans-serif;background:#F1ECE0;color:#221E18;line-height:1.6;}
   .wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
   header{text-align:center;margin-bottom:32px;}
-  header h1{font-size:24px;color:#15130F;margin-bottom:8px;}
+  .brand-badge{display:inline-flex;align-items:center;gap:10px;background:#15130F;color:#F1ECE0;padding:10px 20px;border-radius:30px;margin-bottom:18px;}
+  .brand-badge .brand-logo{width:28px;height:28px;border-radius:8px;background:#A69463;color:#15130F;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;letter-spacing:.02em;}
+  .brand-badge .brand-name{font-weight:700;font-size:14px;letter-spacing:.04em;}
+  header h1{font-size:25px;color:#15130F;margin-bottom:8px;font-weight:800;}
   header p{color:#8A8172;font-size:14px;}
   .card{background:#fff;border:1px solid rgba(166,148,99,0.35);border-radius:12px;padding:26px 28px;margin-bottom:20px;}
   .card h2{font-size:16px;color:#15130F;margin-bottom:14px;border-bottom:1px solid rgba(166,148,99,0.25);padding-bottom:10px;}
@@ -40,6 +43,7 @@
   .icon-approved{background:#E4F1E4;color:#2F5A2F;}
   .icon-rejected{background:#F6E6E4;color:#B0433B;}
   .retry-btn{background:#15130F;color:#F1ECE0;border:none;border-radius:8px;padding:12px 24px;font-size:14px;font-weight:600;margin-top:18px;cursor:pointer;}
+  .wa-btn{display:inline-block;background:#25D366;color:#fff;text-decoration:none;border-radius:8px;padding:14px 28px;font-size:15px;font-weight:700;margin-top:20px;}
 </style>
 </head>
 <body>
@@ -48,17 +52,19 @@
   <!-- TELA 1: FORMULÁRIO -->
   <div id="screen-form">
     <header>
+      <div class="brand-badge"><span class="brand-logo">WSP</span><span class="brand-name">WISE SALES PLATFORM</span></div>
       <h1>Formulário de Candidatura</h1>
-      <p>WSP – Wise Sales Platform | WiseUp</p>
+      <p>Processo seletivo oficial WSP · Powered by WiseUp</p>
     </header>
 
     <div class="card">
       <h2>1. Seus dados</h2>
       <label>Nome completo</label>
-      <input type="text" id="field-name" placeholder="Digite seu nome completo">
+      <input type="text" id="field-name" placeholder="Digite seu nome e sobrenome">
+      <p class="note" style="margin-top:-12px;margin-bottom:16px;">Informe nome e sobrenome.</p>
       <label>E-mail</label>
       <input type="email" id="field-email" placeholder="seuemail@exemplo.com">
-      <label>Telefone / WhatsApp</label>
+      <label>Telefone / WhatsApp (com DDD)</label>
       <input type="tel" id="field-phone" placeholder="(00) 00000-0000">
     </div>
 
@@ -66,10 +72,10 @@
       <h2>2. Grave seu vídeo de candidatura</h2>
       <div class="instructions">
         <strong>Instrução da tarefa:</strong>
-        <p style="margin-top:6px;">Grave um vídeo de até <strong>60 segundos</strong>, falando diretamente para a câmera, respondendo:</p>
+        <p style="margin-top:6px;">Pegue seu celular, abra a câmera frontal (modo selfie) e grave um vídeo de até <strong>60 segundos</strong> falando:</p>
         <ul>
-          <li>Por que essa oportunidade se conecta com o que você busca hoje?</li>
-          <li>O que você espera alcançar (pessoal ou financeiramente) nos próximos 12 meses se for aprovado?</li>
+          <li>Por que essa oportunidade se conecta com o que você busca hoje</li>
+          <li>O que você espera alcançar (pessoal, profissional e financeiramente) se for aprovado</li>
         </ul>
         <p style="margin-top:8px;">Regras importantes:</p>
         <ul>
@@ -79,18 +85,20 @@
         </ul>
       </div>
       <div class="upload-box" id="upload-box" onclick="document.getElementById('field-video').click()">
-        📹 Clique aqui para selecionar o vídeo (MP4, até 60s)
+        📹 Clique aqui para anexar o seu vídeo (MP4, até 60s)
       </div>
       <input type="file" id="field-video" accept="video/mp4,video/quicktime" style="display:none">
-      <p class="note">Candidaturas sem vídeo, com vídeo acima do tempo limite, ou que não respondam às duas perguntas pedidas, não seguem para a próxima etapa.</p>
+
     </div>
 
     <div class="card">
       <h2>3. Antes de enviar</h2>
       <div class="checklist">
-        <label><input type="checkbox" id="chk1"> Assisti à apresentação da oportunidade e entendi que a remuneração é 100% comissionada, sem salário fixo.</label>
-        <label><input type="checkbox" id="chk2"> Entendi que o trabalho é home office, feito por ligação via WhatsApp, e que preciso construir minha própria lista de contatos (não é fornecida pela empresa).</label>
-        <label><input type="checkbox" id="chk3"> Tenho disponibilidade e interesse real em seguir o treinamento e o plano de carreira.</label>
+        <label><input type="checkbox" id="chk1"> Assisti à apresentação da oportunidade de trabalho e entendi que a remuneração é 100% comissionada.</label>
+        <label><input type="checkbox" id="chk2"> Entendi que o trabalho é 100% home office, feito por ligação e com flexibilidade de horário.</label>
+        <label><input type="checkbox" id="chk3"> Entendi que não é necessário realizar investimento financeiro ou comprar qualquer produto.</label>
+        <label><input type="checkbox" id="chk4"> Entendi que receberei treinamento de técnica de venda, gestão emocional, liderança, suporte e acompanhamento diário.</label>
+        <label><input type="checkbox" id="chk5"> Tenho disponibilidade e interesse real em seguir o treinamento e o plano de carreira.</label>
       </div>
     </div>
 
@@ -110,7 +118,8 @@
   <div class="status-screen" id="screen-approved">
     <div class="icon-circle icon-approved">✓</div>
     <div class="status-title">Candidatura aprovada!</div>
-    <p class="status-sub">Recebemos seus dados e seu vídeo. Em breve você receberá um retorno no WhatsApp com os próximos passos do processo.</p>
+    <p class="status-sub">Parabéns pela sua aprovação! Clique no botão abaixo e envie a palavra "Aprovado(a)" para receber as próximas orientações.</p>
+    <a class="wa-btn" href="https://wa.me/5516988057843?text=Aprovado(a)" target="_blank" rel="noopener">Falar no WhatsApp agora</a>
   </div>
 
   <!-- TELA 3B: NÃO APROVADO -->
@@ -125,7 +134,7 @@
 
 <script>
 // ⚠️ Substitua pela URL do seu Web App do Google Apps Script (passo a passo abaixo)
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGQqpNjNPyrBXiBzE47sc0YjYM1wsCUAlQLbU4pMuKz_eMA7fz3QLQ8u4wXPdam6NyEA/exec";
+const APPS_SCRIPT_URL = "COLE_AQUI_A_URL_DO_SEU_APPS_SCRIPT";
 
 function showScreen(id){
   document.querySelectorAll('.status-screen, #screen-form').forEach(el => el.style.display = 'none');
@@ -187,23 +196,26 @@ async function submitForm(){
   const chk1 = document.getElementById('chk1').checked;
   const chk2 = document.getElementById('chk2').checked;
   const chk3 = document.getElementById('chk3').checked;
+  const chk4 = document.getElementById('chk4').checked;
+  const chk5 = document.getElementById('chk5').checked;
 
   document.getElementById('error-msg').style.display = 'none';
 
-  if(!name || !email || !phone){
-    showError('Preencha nome, e-mail e telefone antes de enviar.');
+  const nameParts = name.split(/\s+/).filter(Boolean);
+  if(!name || nameParts.length < 2){
+    showError('Informe seu nome completo (nome e sobrenome).');
     return;
   }
-  if(!chk1 || !chk2 || !chk3){
-    showError('Marque as três confirmações antes de enviar.');
+  if(!email || !phone){
+    showError('Preencha e-mail e telefone antes de enviar.');
     return;
   }
-
-  // Sem vídeo -> já reprova direto, sem precisar chamar o backend
   if(!videoFile){
-    document.getElementById('screen-form').style.display = 'none';
-    document.getElementById('rejected-reason').textContent = 'Não identificamos o envio do vídeo de candidatura. Ele é obrigatório para seguir no processo.';
-    showScreen('screen-rejected');
+    showError('É obrigatório anexar o vídeo de candidatura antes de enviar.');
+    return;
+  }
+  if(!chk1 || !chk2 || !chk3 || !chk4 || !chk5){
+    showError('Marque todas as confirmações antes de enviar.');
     return;
   }
 
