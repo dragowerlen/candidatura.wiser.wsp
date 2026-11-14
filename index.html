@@ -116,7 +116,7 @@
   <div class="status-screen" id="screen-approved">
     <div class="icon-circle icon-approved">✓</div>
     <div class="status-title">Candidatura aprovada!</div>
-    <p class="status-sub">Parabéns pela sua aprovação! Clique no botão abaixo e envie a palavra "Aprovado(a)" para receber as próximas orientações.</p>
+    <p class="status-sub"><strong style="color:#15130F;">Parabéns pela sua aprovação!</strong> Clique no botão abaixo e envie a palavra <strong style="color:#15130F;">"Aprovado(a)"</strong> para receber as próximas orientações.</p>
     <a class="wa-btn" href="https://wa.me/5516988057843?text=Aprovado(a)" target="_blank" rel="noopener">Falar no WhatsApp agora</a>
   </div>
 
@@ -132,7 +132,7 @@
 
 <script>
 // ⚠️ Substitua pela URL do seu Web App do Google Apps Script (passo a passo abaixo)
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGQqpNjNPyrBXiBzE47sc0YjYM1wsCUAlQLbU4pMuKz_eMA7fz3QLQ8u4wXPdam6NyEA/exec";
+const APPS_SCRIPT_URL = "COLE_AQUI_A_URL_DO_SEU_APPS_SCRIPT";
 
 function showScreen(id){
   document.querySelectorAll('.status-screen, #screen-form').forEach(el => el.style.display = 'none');
@@ -170,20 +170,15 @@ function animateProgress(durationMs){
     let p = 0;
     const step = 100 / (durationMs / 150);
     const interval = setInterval(() => {
-      p = Math.min(p + step, 95); // trava em 95% até a resposta real chegar
+      p = Math.min(p + step, 100);
       fill.style.width = p + '%';
       pct.textContent = Math.round(p) + '%';
-      if(p >= 95) clearInterval(interval);
+      if(p >= 100){
+        clearInterval(interval);
+        resolve();
+      }
     }, 150);
-    resolve();
   });
-}
-
-function finishProgress(){
-  const fill = document.getElementById('progress-fill');
-  const pct = document.getElementById('progress-pct');
-  fill.style.width = '100%';
-  pct.textContent = '100%';
 }
 
 async function submitForm(){
@@ -203,8 +198,13 @@ async function submitForm(){
     showError('Informe seu nome completo (nome e sobrenome).');
     return;
   }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
   if(!email || !phone){
     showError('Preencha e-mail e telefone antes de enviar.');
+    return;
+  }
+  if(!emailRegex.test(email)){
+    showError('Informe um e-mail válido.');
     return;
   }
   if(!videoFile){
@@ -219,7 +219,7 @@ async function submitForm(){
   document.getElementById('submit-btn').disabled = true;
   document.getElementById('screen-form').style.display = 'none';
   showScreen('screen-loading');
-  animateProgress(4000);
+  const progressPromise = animateProgress(7000);
 
   try{
     const base64 = await fileToBase64(videoFile);
@@ -230,32 +230,27 @@ async function submitForm(){
       mimeType: videoFile.type || 'video/mp4'
     };
 
-    const response = await fetch(APPS_SCRIPT_URL, {
+    const fetchPromise = fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
-    });
+    }).then(r => r.json());
 
-    const result = await response.json();
-    finishProgress();
+    const [result] = await Promise.all([fetchPromise, progressPromise]);
 
-    setTimeout(() => {
-      document.getElementById('screen-loading').style.display = 'none';
-      if(result.status === 'ok'){
-        showScreen('screen-approved');
-      } else {
-        document.getElementById('rejected-reason').textContent = 'Houve um problema ao enviar seu vídeo. Tente novamente.';
-        showScreen('screen-rejected');
-      }
-    }, 500);
+    document.getElementById('screen-loading').style.display = 'none';
+    if(result.status === 'ok'){
+      showScreen('screen-approved');
+    } else {
+      document.getElementById('rejected-reason').textContent = 'Houve um problema ao enviar seu vídeo. Tente novamente.';
+      showScreen('screen-rejected');
+    }
 
   } catch(err){
-    finishProgress();
-    setTimeout(() => {
-      document.getElementById('screen-loading').style.display = 'none';
-      document.getElementById('rejected-reason').textContent = 'Houve um problema ao enviar sua candidatura. Verifique sua conexão e tente novamente.';
-      showScreen('screen-rejected');
-    }, 500);
+    await progressPromise;
+    document.getElementById('screen-loading').style.display = 'none';
+    document.getElementById('rejected-reason').textContent = 'Houve um problema ao enviar sua candidatura. Verifique sua conexão e tente novamente.';
+    showScreen('screen-rejected');
   }
 }
 
