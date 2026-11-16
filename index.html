@@ -140,12 +140,22 @@ function showScreen(id){
   document.getElementById(id).classList.add('active');
 }
 
+const MAX_VIDEO_MB = 25;
 document.getElementById('field-video').addEventListener('change', function(){
   const box = document.getElementById('upload-box');
-  if(this.files && this.files[0]){
-    box.classList.add('has-file');
-    box.textContent = '✅ Vídeo selecionado: ' + this.files[0].name;
+  const file = this.files && this.files[0];
+  if(!file) return;
+  const sizeMB = file.size / (1024 * 1024);
+  if(sizeMB > MAX_VIDEO_MB){
+    box.classList.remove('has-file');
+    box.textContent = '📹 Clique aqui para anexar o seu vídeo (MP4, até 60s)';
+    this.value = '';
+    showError('Vídeo muito grande (' + sizeMB.toFixed(1) + 'MB). O limite é ' + MAX_VIDEO_MB + 'MB — grave em qualidade menor ou um vídeo mais curto.');
+    return;
   }
+  document.getElementById('error-msg').style.display = 'none';
+  box.classList.add('has-file');
+  box.textContent = '✅ Vídeo selecionado: ' + file.name;
 });
 
 function showError(msg){
@@ -163,21 +173,44 @@ function fileToBase64(file){
   });
 }
 
-function animateProgress(durationMs){
-  return new Promise(resolve => {
-    const fill = document.getElementById('progress-fill');
-    const pct = document.getElementById('progress-pct');
-    let p = 0;
-    const step = 100 / (durationMs / 150);
-    const interval = setInterval(() => {
-      p = Math.min(p + step, 100);
-      fill.style.width = p + '%';
-      pct.textContent = Math.round(p) + '%';
-      if(p >= 100){
-        clearInterval(interval);
-        resolve();
+function setProgress(pct, label){
+  const fill = document.getElementById('progress-fill');
+  const pctEl = document.getElementById('progress-pct');
+  const subEl = document.getElementById('loading-sub');
+  fill.style.width = pct + '%';
+  pctEl.textContent = Math.round(pct) + '%';
+  if(label) subEl.textContent = label;
+}
+
+function sendWithProgress(url, payload){
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+    xhr.timeout = 120000;
+
+    xhr.upload.onprogress = function(e){
+      if(e.lengthComputable){
+        const pct = Math.min((e.loaded / e.total) * 100, 99);
+        setProgress(pct, 'Enviando vídeo...');
       }
-    }, 150);
+    };
+    xhr.upload.onload = function(){
+      setProgress(99, 'Finalizando envio...');
+    };
+    xhr.onload = function(){
+      setProgress(100, 'Quase lá...');
+      try{
+        const result = JSON.parse(xhr.responseText);
+        resolve(result);
+      } catch(err){
+        reject(new Error('resposta_invalida'));
+      }
+    };
+    xhr.onerror = function(){ reject(new Error('erro_rede')); };
+    xhr.ontimeout = function(){ reject(new Error('timeout')); };
+
+    xhr.send(JSON.stringify(payload));
   });
 }
 
@@ -219,7 +252,7 @@ async function submitForm(){
   document.getElementById('submit-btn').disabled = true;
   document.getElementById('screen-form').style.display = 'none';
   showScreen('screen-loading');
-  const progressPromise = animateProgress(15000);
+  setProgress(0, 'Preparando vídeo...');
 
   try{
     const base64 = await fileToBase64(videoFile);
@@ -230,13 +263,7 @@ async function submitForm(){
       mimeType: videoFile.type || 'video/mp4'
     };
 
-    const fetchPromise = fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    }).then(r => r.json());
-
-    const [result] = await Promise.all([fetchPromise, progressPromise]);
+    const result = await sendWithProgress(APPS_SCRIPT_URL, payload);
 
     document.getElementById('screen-loading').style.display = 'none';
     if(result.status === 'ok'){
@@ -247,9 +274,11 @@ async function submitForm(){
     }
 
   } catch(err){
-    await progressPromise;
     document.getElementById('screen-loading').style.display = 'none';
-    document.getElementById('rejected-reason').textContent = 'Houve um problema ao enviar sua candidatura. Verifique sua conexão e tente novamente.';
+    let msg = 'Houve um problema ao enviar sua candidatura. Verifique sua conexão e tente novamente.';
+    if(err && err.message === 'timeout') msg = 'O envio demorou demais e foi interrompido. Verifique sua conexão e tente novamente.';
+    if(err && err.message === 'erro_rede') msg = 'Falha de conexão durante o envio. Verifique sua internet e tente novamente.';
+    document.getElementById('rejected-reason').textContent = msg;
     showScreen('screen-rejected');
   }
 }
