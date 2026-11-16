@@ -55,7 +55,7 @@
 
   .checklist{font-size:13.5px;color:#C7C4D2;}
   .checklist label{display:flex;align-items:flex-start;gap:10px;font-weight:400;margin-bottom:14px;}
-  .checklist input{margin-top:3px;width:16px;height:16px;accent-color:#8E6FF2;}
+  .checklist input{margin-top:3px;width:16px;height:16px;min-width:16px;min-height:16px;flex-shrink:0;accent-color:#8E6FF2;}
 
   .status-screen{display:none;text-align:center;padding:70px 24px;max-width:480px;margin:0 auto;}
   .status-screen.active{display:block;}
@@ -81,10 +81,9 @@
 
   <div id="screen-form">
     <header>
-      <img src="https://d31zra5bs5df64.cloudfront.net/prod/3LfTiz8X3iJ2GdjmE2uvQKbNdOv/chat/3M4mGRYHmDxgInWYVv4jTFmY8DX/3M6wGN6osrOFrXljrnLC1xqx97S.png?Expires=1794687828&Key-Pair-Id=K2FT0I8VPJSP5H&Signature=F54HhlegWBNZ3YxQrUn8iNj6l96zThWIwqf1APMyHczt7NZs1dzKcVqxOY5ZkpYXlPCPWmxeZLDfWItLChTjDJd~tNVhk2Lut-oK-G1-Z71ykZmJxe0oxq5CUCvuPwAEOnP8WD7IUsYRNHjVqI2zEvtEywc6A0ArMQHF4wxZLu44U4ulSNr4NxdTNH7c9pEbohDDvaOfsAWqdcVf6u~c4hNQJ5~vjnYNN9rdElZwca1wdmDhYl8MfnFnD~9ZgtYiSl6a0Qwv4ltCuKCB6~MwVXkrcDwN~6r5eqLYRJmb9htmszduWfGKt3rb~O7doKu4OJzsvbYmgkGHU-lWSgBiPA__" alt="WSP - Wiser Sales Platform">
-      <div class="kicker">Processo seletivo</div>
+      <img src="https://d31zra5bs5df64.cloudfront.net/prod/3LfTiz8X3iJ2GdjmE2uvQKbNdOv/chat/3M4mGRYHmDxgInWYVv4jTFmY8DX/3MANxQ8jHUb8d6osPoYgMynmhhK.png?Expires=1794793257&Key-Pair-Id=K2FT0I8VPJSP5H&Signature=hGtGzPIJkZnNnTDUA3aGc8-mNYmes7qweBxnFxdeI8zEEDYmUli5LFxd~seHEHuoYXRa0j4trqddRwCorGnOe4PXHlkW6uQFZdDUJGb2YcHSCmFaOwUg3Oq3LOrXrQ1HoYf1LxkxEFSR4ioesMx0DxqF7DsYzvpAaZi~hdfq61SURkcovd0YNHyeFDIseiQuNUhWLnAHz6gpSc6Q8XfCGOIP~SriNPBWW2xb1hMXPvE2z9oTQ0D93S1gzxdXHA3WIJJORXE6phvlsAFDODLuQov~Kzu9F2ntaPLtr6P236kHJeMuCjE9nPAA-YND4r2bxkYjh6EUdMkx4-hY5LAwOA__" alt="WSP - Wiser Sales Platform">
       <h1>Formulário de Candidatura</h1>
-      <p>Wiser Educação · WSP · Wise Up Online · Drago</p>
+      <p>Wiser Educação · Wise Up · WSP · Drago</p>
       <div class="divider"></div>
     </header>
 
@@ -142,9 +141,9 @@
   </div>
 
   <div class="status-screen" id="screen-approved">
-    <img class="approved-img" src="https://d31zra5bs5df64.cloudfront.net/prod/3LfTiz8X3iJ2GdjmE2uvQKbNdOv/chat/3M4mGRYHmDxgInWYVv4jTFmY8DX/3M6vKAB2cpjdC7lhrCkknB2AIRO.png?Expires=1794687364&Key-Pair-Id=K2FT0I8VPJSP5H&Signature=KD4OaZuveBatX7Y69Xl0HMkYZRfMT4BNK1MAOrP02KuybayCphwx4Cv7sXDXfhcaar5OsmNysfXJy4EB4o6V9IspXYpuss-slvPxF-FfxLByRn-A8wk38bL0bVTkMRIoEZGreIhJfV~vSAxxYEdCzWAsGWUBbCTplBfj4V~Cw94-XstJWtqkl9Ms2gj38T4799bLqq-GWQaY5Xy6UXQyZixSy3LLhaH3p6jj91t4OT8JV9IxluRzYZoTZaMzUOyyfn7~AAYCFOInLu4FwJ5HV7AXtrUGduTmQrWijtvSNmtp~8KrPWi9txmfXO2GmRXZVyZwv1TskVk7~sApscPtCQ__" alt="Aprovado">
+    <img class="approved-img" src="https://d31zra5bs5df64.cloudfront.net/prod/3LfTiz8X3iJ2GdjmE2uvQKbNdOv/chat/3M4mGRYHmDxgInWYVv4jTFmY8DX/3MANxOQ9o6EqSrpzz4UPrQxIPrf.png?Expires=1794793257&Key-Pair-Id=K2FT0I8VPJSP5H&Signature=dvrtdq9ijc9aqJ4EKx426bstpeHTlz6YiMLecXpbVSCvcmO-4hjohcd-MyBIRA5-OepSPO6KsB1aix8hgJ5z385-11vC-RvP3N6nERuXlAJ6AzjgjNqndjYnN9KBAZQ5T6zT6od4C-lNfiNyABHNDKMonWiEZgrKl-ItqtAqEI9ZGYFMzTe~aaDrD-CFn-42Y7SIvqKH~oVQLgrJ9GSdikIfZ4TrhbJ4UERFFU4weLV5SUkjfyGDqZ7hnKpNfkPN6Q9Ps42Ha0NNZwc6pePkenK2As9oe6UpR26fIqDtFvZjvgc1kkAMuiYgGxUF4ykzXKTbOdUl5Zf~vLMQ5DFkQA__" alt="Aprovado">
     <p style="font-size:18px;font-weight:700;color:#FFFFFF;margin-bottom:12px;">Parabéns pela sua aprovação!</p>
-    <p class="status-sub">Para receber as próximas orientações da sua candidatura, clique no botão abaixo e envie a palavra "Aprovado" pelo WhatsApp.</p>
+    <p class="status-sub" style="font-weight:700;color:#EDEBE6;">Para receber as próximas orientações da sua candidatura, clique no botão abaixo e envie a palavra "Aprovado" pelo WhatsApp.</p>
     <a class="wa-btn" href="https://wa.me/5516988057843?text=Aprovado" target="_blank" rel="noopener">Falar no WhatsApp agora</a>
   </div>
 
