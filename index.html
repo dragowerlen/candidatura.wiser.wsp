@@ -268,7 +268,9 @@ async function submitForm(){
     });
 
     if(initResult.status !== 'ok' || !initResult.uploadUrl){
-      throw new Error('init_falhou');
+      const e = new Error('init_falhou');
+      e.detalhe = initResult.reason || initResult.debug || 'sem detalhe';
+      throw e;
     }
 
     const fileId = await uploadToDrive(initResult.uploadUrl, videoFile);
@@ -296,6 +298,7 @@ async function submitForm(){
     if(err && err.message === 'timeout') msg = 'O envio demorou demais e foi interrompido. Verifique sua conexão e tente novamente.';
     if(err && err.message === 'erro_rede') msg = 'Falha de conexão durante o envio. Verifique sua internet e tente novamente.';
     if(err && err.message === 'upload_falhou') msg = 'O envio do vídeo foi interrompido pelo servidor. Tente novamente.';
+    if(err && err.detalhe) msg = msg + ' [Detalhe técnico: ' + err.detalhe + ']';
     document.getElementById('rejected-reason').textContent = msg;
     showScreen('screen-rejected');
   }
