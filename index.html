@@ -1,84 +1,243 @@
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0iCCax1KWiz-yW2QIg6tJSP9fwHzui2XGrmrsoS3aIPmpyjwyvfGvsOOT98-Tdp9Bg/exec";
-const CHUNK_SIZE = 10 * 1024 * 1024; // 10 MB por parte
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Candidatura WSP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body class="flex items-center justify-center p-4 text-white">
 
-async function submitForm(event) {
-  event.preventDefault();
+  <!-- TELA 1: FORMULÁRIO -->
+  <div id="screen-form" class="w-full max-w-xl bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-2xl">
+    <h1 class="text-3xl font-bold mb-2 text-center">Candidatura WSP</h1>
+    <p class="text-gray-300 text-center mb-6">Preencha seus dados e envie um vídeo de apresentação.</p>
 
-  const fileInput = document.getElementById("video");
-  const file = fileInput.files[0];
+    <form id="candidateForm" onsubmit="submitForm(event)">
+      <div class="mb-4">
+        <label for="name" class="block text-sm font-medium mb-1">Nome completo</label>
+        <input type="text" id="name" name="name" required
+          class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
+      </div>
 
-  if (!file) {
-    alert("Selecione um vídeo.");
-    return;
-  }
+      <div class="mb-4">
+        <label for="email" class="block text-sm font-medium mb-1">E-mail</label>
+        <input type="email" id="email" name="email" required
+          class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
+      </div>
 
-  showLoading("Preparando envio...");
+      <div class="mb-4">
+        <label for="phone" class="block text-sm font-medium mb-1">Telefone / WhatsApp</label>
+        <input type="tel" id="phone" name="phone" required
+          class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
+      </div>
 
-  try {
-    // 1. Cria sessão de upload no Drive
-    const session = await fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "createSession",
-        fileName: file.name,
-        mimeType: file.type || "video/mp4",
-        size: file.size
-      })
-    }).then(r => r.json());
+      <div class="mb-6">
+        <label for="video" class="block text-sm font-medium mb-1">Vídeo de apresentação</label>
+        <input type="file" id="video" name="video" accept="video/*" capture="user" required
+          class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-700">
+        <p class="text-xs text-gray-400 mt-2">Aceitamos vídeos de qualquer resolução. Tamanho máximo recomendado: até 500 MB.</p>
+      </div>
 
-    if (session.status !== "ok") {
-      throw new Error("Não foi possível iniciar o upload: " + (session.reason || ""));
+      <button type="submit"
+        class="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-bold transition transform hover:scale-[1.02]">
+        Enviar candidatura
+      </button>
+    </form>
+  </div>
+
+  <!-- TELA 2: LOADING -->
+  <div id="screen-loading" class="hidden w-full max-w-xl text-center">
+    <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-10 shadow-2xl">
+      <h2 class="text-2xl font-bold mb-2">Analisando sua candidatura...</h2>
+      <p id="loading-text" class="text-gray-300 mb-6">Preparando envio...</p>
+      <div class="w-full h-3 bg-gray-700 rounded-full overflow-hidden">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-0 transition-all duration-300"></div>
+      </div>
+      <p id="progress-text" class="mt-3 text-gray-400">0%</p>
+    </div>
+  </div>
+
+  <!-- TELA 3: SUCESSO -->
+  <div id="screen-success" class="hidden w-full max-w-xl text-center">
+    <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-10 shadow-2xl">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-3xl">✓</div>
+      <h2 class="text-2xl font-bold mb-2">Candidatura enviada!</h2>
+      <p class="text-gray-300 mb-4">Seu vídeo foi recebido com sucesso.</p>
+      <a id="video-link" href="#" target="_blank" class="text-purple-400 hover:text-purple-300 underline break-all">
+        Ver vídeo no Google Drive
+      </a>
+      <div class="mt-6">
+        <button onclick="resetForm()"
+          class="py-2 px-6 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition">
+          Enviar outra candidatura
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 4: ERRO -->
+  <div id="screen-error" class="hidden w-full max-w-xl text-center">
+    <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-10 shadow-2xl">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 text-3xl">!</div>
+      <h2 class="text-2xl font-bold mb-2">Não foi possível concluir sua candidatura</h2>
+      <p id="error-text" class="text-gray-300 mb-6">Falha de conexão durante o envio. Verifique sua internet e tente novamente.</p>
+      <button onclick="retrySubmit()"
+        class="py-3 px-8 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-bold transition">
+        Tentar novamente
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ⚠️ SUBSTITUA A URL ABAIXO PELA NOVA URL DO SEU WEB APP APÓS CRIAR A NOVA IMPLANTAÇÃO
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0iCCax1KWiz-yW2QIg6tJSP9fwHzui2XGrmrsoS3aIPmpyjwyvfGvsOOT98-Tdp9Bg/exec";
+    const CHUNK_SIZE = 10 * 1024 * 1024; // 10 MB por parte
+
+    let lastFormData = null;
+
+    function showScreen(id) {
+      document.querySelectorAll('[id^="screen-"]').forEach(el => el.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
     }
 
-    // 2. Envia o vídeo em partes
-    const totalSize = file.size;
-    let start = 0;
+    function showLoading(message, percent = 0) {
+      showScreen("screen-loading");
+      document.getElementById("loading-text").textContent = message || "Enviando...";
+      document.getElementById("progress-bar").style.width = percent + "%";
+      document.getElementById("progress-text").textContent = Math.round(percent) + "%";
+    }
 
-    while (start < totalSize) {
-      const end = Math.min(start + CHUNK_SIZE - 1, totalSize - 1);
-      const chunk = file.slice(start, end + 1);
+    function showSuccess(videoLink) {
+      showScreen("screen-success");
+      const linkEl = document.getElementById("video-link");
+      linkEl.href = videoLink;
+      linkEl.textContent = videoLink;
+    }
 
-      showLoading(`Enviando vídeo... ${Math.round((start / totalSize) * 100)}%`);
+    function showError(message) {
+      showScreen("screen-error");
+      document.getElementById("error-text").textContent = message || "Falha de conexão durante o envio. Verifique sua internet e tente novamente.";
+    }
 
-      const base64 = await blobToBase64(chunk);
+    function resetForm() {
+      document.getElementById("candidateForm").reset();
+      lastFormData = null;
+      showScreen("screen-form");
+    }
 
-      const result = await fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          action: "uploadChunk",
-          uploadUrl: session.uploadUrl,
-          range: `bytes ${start}-${end}/${totalSize}`,
-          chunkData: base64,
-          totalSize: totalSize,
-          fileName: file.name,
-          name: document.getElementById("name").value.trim(),
-          email: document.getElementById("email").value.trim(),
-          phone: document.getElementById("phone").value.trim()
-        })
-      }).then(r => r.json());
+    function retrySubmit() {
+      if (lastFormData) {
+        doSubmit(lastFormData);
+      } else {
+        showScreen("screen-form");
+      }
+    }
 
-      if (result.status === "ok") {
-        showSuccess(result.videoLink);
+    async function submitForm(event) {
+      event.preventDefault();
+
+      const fileInput = document.getElementById("video");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("Selecione um vídeo para continuar.");
         return;
       }
 
-      if (result.status === "partial") {
-        start = result.nextByte || end + 1;
-      } else {
-        throw new Error(result.reason || "Erro no upload da parte");
+      lastFormData = {
+        file: file,
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim()
+      };
+
+      await doSubmit(lastFormData);
+    }
+
+    async function doSubmit(data) {
+      const { file, name, email, phone } = data;
+
+      try {
+        showLoading("Preparando envio...", 0);
+
+        // 1. Cria sessão de upload no Drive
+        const session = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "createSession",
+            fileName: file.name,
+            mimeType: file.type || "video/mp4",
+            size: file.size
+          })
+        }).then(r => r.json());
+
+        if (session.status !== "ok") {
+          throw new Error("Não foi possível iniciar o upload: " + (session.reason || ""));
+        }
+
+        // 2. Envia o vídeo em partes
+        const totalSize = file.size;
+        let start = 0;
+
+        while (start < totalSize) {
+          const end = Math.min(start + CHUNK_SIZE - 1, totalSize - 1);
+          const chunk = file.slice(start, end + 1);
+
+          const percent = (start / totalSize) * 100;
+          showLoading(`Enviando vídeo... ${Math.round(percent)}%`, percent);
+
+          const base64 = await blobToBase64(chunk);
+
+          const result = await fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "uploadChunk",
+              uploadUrl: session.uploadUrl,
+              range: `bytes ${start}-${end}/${totalSize}`,
+              chunkData: base64,
+              totalSize: totalSize,
+              fileName: file.name,
+              name: name,
+              email: email,
+              phone: phone
+            })
+          }).then(r => r.json());
+
+          if (result.status === "ok") {
+            showLoading("Finalizando...", 100);
+            setTimeout(() => showSuccess(result.videoLink), 500);
+            return;
+          }
+
+          if (result.status === "partial") {
+            start = result.nextByte || end + 1;
+          } else {
+            throw new Error(result.reason || "Erro no upload da parte");
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        showError("Falha no envio. Verifique sua internet e tente novamente.");
       }
     }
-  } catch (err) {
-    console.error(err);
-    showError("Falha no envio. Verifique sua internet e tente novamente.");
-  }
-}
 
-function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result.split(",")[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-}
+    function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+  </script>
+
+</body>
+</html>
