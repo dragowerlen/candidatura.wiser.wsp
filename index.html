@@ -39,6 +39,27 @@
           class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
       </div>
 
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2">Termos e autorizações</label>
+        <div class="space-y-3">
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" name="termo_1" required
+              class="mt-1 w-5 h-5 rounded border-white/30 bg-white/10 text-purple-600 focus:ring-purple-500">
+            <span class="text-sm text-gray-300">Declaro que todas as informações fornecidas são verdadeiras.</span>
+          </label>
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" name="termo_2" required
+              class="mt-1 w-5 h-5 rounded border-white/30 bg-white/10 text-purple-600 focus:ring-purple-500">
+            <span class="text-sm text-gray-300">Autorizo o uso dos meus dados para o processo seletivo.</span>
+          </label>
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" name="termo_3" required
+              class="mt-1 w-5 h-5 rounded border-white/30 bg-white/10 text-purple-600 focus:ring-purple-500">
+            <span class="text-sm text-gray-300">Li e concordo com os Termos de Uso e Política de Privacidade.</span>
+          </label>
+        </div>
+      </div>
+
       <div class="mb-6">
         <label for="video" class="block text-sm font-medium mb-1">Vídeo de apresentação</label>
         <input type="file" id="video" name="video" accept="video/*" capture="user" required
@@ -72,7 +93,7 @@
       <h2 class="text-2xl font-bold mb-2">Candidatura enviada!</h2>
       <p class="text-gray-300 mb-4">Seu vídeo foi recebido com sucesso.</p>
       <a id="video-link" href="#" target="_blank" class="text-purple-400 hover:text-purple-300 underline break-all">
-        Ver vídeo no Google Drive
+        Ver vídeo
       </a>
       <div class="mt-6">
         <button onclick="resetForm()"
@@ -97,9 +118,8 @@
   </div>
 
   <script>
-    // ⚠️ SUBSTITUA A URL ABAIXO PELA NOVA URL DO SEU WEB APP APÓS CRIAR A NOVA IMPLANTAÇÃO
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0iCCax1KWiz-yW2QIg6tJSP9fwHzui2XGrmrsoS3aIPmpyjwyvfGvsOOT98-Tdp9Bg/exec";
-    const CHUNK_SIZE = 10 * 1024 * 1024; // 10 MB por parte
+    // ⚠️ SUBSTITUA PELA URL DO SEU WORKER
+    const WORKER_URL = "https://formulario-candidatura-wsp.SEU_USUARIO.workers.dev";
 
     let lastFormData = null;
 
@@ -144,6 +164,7 @@
     async function submitForm(event) {
       event.preventDefault();
 
+      const form = document.getElementById("candidateForm");
       const fileInput = document.getElementById("video");
       const file = fileInput.files[0];
 
@@ -152,90 +173,54 @@
         return;
       }
 
-      lastFormData = {
-        file: file,
-        name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: document.getElementById("phone").value.trim()
-      };
+      const formData = new FormData(form);
+      formData.set("agreed", "true");
 
-      await doSubmit(lastFormData);
+      lastFormData = formData;
+
+      await doSubmit(formData);
     }
 
-    async function doSubmit(data) {
-      const { file, name, email, phone } = data;
-
+    async function doSubmit(formData) {
       try {
-        showLoading("Preparando envio...", 0);
+        showLoading("Enviando candidatura...");
 
-        // 1. Cria sessão de upload no Drive
-        const session = await fetch(APPS_SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "createSession",
-            fileName: file.name,
-            mimeType: file.type || "video/mp4",
-            size: file.size
-          })
-        }).then(r => r.json());
+        const xhr = new XMLHttpRequest();
 
-        if (session.status !== "ok") {
-          throw new Error("Não foi possível iniciar o upload: " + (session.reason || ""));
-        }
-
-        // 2. Envia o vídeo em partes
-        const totalSize = file.size;
-        let start = 0;
-
-        while (start < totalSize) {
-          const end = Math.min(start + CHUNK_SIZE - 1, totalSize - 1);
-          const chunk = file.slice(start, end + 1);
-
-          const percent = (start / totalSize) * 100;
-          showLoading(`Enviando vídeo... ${Math.round(percent)}%`, percent);
-
-          const base64 = await blobToBase64(chunk);
-
-          const result = await fetch(APPS_SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({
-              action: "uploadChunk",
-              uploadUrl: session.uploadUrl,
-              range: `bytes ${start}-${end}/${totalSize}`,
-              chunkData: base64,
-              totalSize: totalSize,
-              fileName: file.name,
-              name: name,
-              email: email,
-              phone: phone
-            })
-          }).then(r => r.json());
-
-          if (result.status === "ok") {
-            showLoading("Finalizando...", 100);
-            setTimeout(() => showSuccess(result.videoLink), 500);
-            return;
+        xhr.upload.addEventListener("progress", (event) => {
+          if (event.lengthComputable) {
+            const percent = (event.loaded / event.total) * 100;
+            showLoading(`Enviando vídeo... ${Math.round(percent)}%`, percent);
           }
+        });
 
-          if (result.status === "partial") {
-            start = result.nextByte || end + 1;
+        xhr.addEventListener("load", () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              const result = JSON.parse(xhr.responseText);
+              if (result.status === "ok") {
+                showSuccess(result.videoLink);
+              } else {
+                showError("Erro no servidor: " + (result.reason || "desconhecido"));
+              }
+            } catch (err) {
+              showError("Resposta inválida do servidor.");
+            }
           } else {
-            throw new Error(result.reason || "Erro no upload da parte");
+            showError("Falha no envio. Verifique sua internet e tente novamente.");
           }
-        }
+        });
+
+        xhr.addEventListener("error", () => {
+          showError("Falha de conexão durante o envio. Verifique sua internet e tente novamente.");
+        });
+
+        xhr.open("POST", WORKER_URL + "/api/submit");
+        xhr.send(formData);
       } catch (err) {
         console.error(err);
         showError("Falha no envio. Verifique sua internet e tente novamente.");
       }
-    }
-
-    function blobToBase64(blob) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
     }
   </script>
 
